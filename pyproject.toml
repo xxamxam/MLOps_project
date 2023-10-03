@@ -12,6 +12,32 @@ torch = "^2.0.1"
 pandas = "^2.1.1"
 
 
+[tool.poetry.dev-dependencies]
+pre-commit = "^2.16.0"
+pytest = "^6.2.5"
+
+[tool.black]
+line-length = 90
+target-version = ["py39"]
+
+[tool.isort]
+src_paths = ["ds_project"]
+profile = "black"
+line_length = 90
+lines_after_imports = 2
+
+[tool.nbqa.config]
+black = "pyproject.toml"
+isort = "pyproject.toml"
+flake8 = "setup.cfg"
+
+[tool.nbqa.addopts]
+flake8 = ["--extend-ignore=E402"]
+
+[tool.nbqa.mutate]
+black = 1
+isort = 1
+
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
