@@ -1,11 +1,13 @@
-import sys
-
+import hydra
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.data
+from conf.config import Config
+from hydra.core.config_store import ConfigStore
 from model import CNN_new
-from utils import get_loader, load_mnist
+from tqdm import tqdm
+from utils import get_loader, load_mnist, save_all
 
 
 def train_epoch(model, optimizer, train_loader, criterion, device):
@@ -25,7 +27,7 @@ def train_epoch(model, optimizer, train_loader, criterion, device):
     """
     # your code here
     model.train()
-    for x, y in train_loader:
+    for x, y in tqdm(train_loader):
         x = x.to(device)
         y = y.to(device)
         x_pred = model(x)
@@ -89,10 +91,19 @@ def train(
     4 lists: train_log, train_acc_log, val_log, val_acc_log
     with corresponding metrics per epoch
     """
+    try:
+        device = torch.device(device)
+    except Exception:
+        print(Exception)
+        print(f"do not find device {device}. Will use 'cpu'")
+        device = torch.device("cpu")
+
+    model = model.to(device)
+
     train_log, train_acc_log = [], []
     val_log, val_acc_log = [], []
 
-    for epoch in range(n_epochs):
+    for epoch in tqdm(range(n_epochs)):
         train_epoch(model, opt, train_loader, criterion, device)
         train_loss, train_acc = evaluate_loss_acc(train_loader, model, criterion, device)
         val_loss, val_acc = evaluate_loss_acc(test_loader, model, criterion, device)
@@ -115,39 +126,65 @@ def train(
     return train_log, train_acc_log, val_log, val_acc_log
 
 
-def save_all(model, model_parameters, save_name):
-    model_dict = model.state_dict()
-    tmp_save = [model_dict, model_parameters]
-    torch.save(
-        tmp_save, save_name
-    )  # не state_dict потому что у модели есть параметры, которые влияют на архитектуру
+cs = ConfigStore.instance()
+cs.store(name="config", node=Config)
 
 
-if __name__ == "__main__":
-    n_epochs = 3
-    save_name = "best_model.xyz"
-    if len(sys.argv) > 1:
-        n_epochs = int(sys.argv[1])
-        if len(sys.argv) > 2:
-            save_name = sys.argv[2]
+@hydra.main(config_path="./../conf", config_name="config", version_base="1.3")
+def main(cfg: Config):
+    print(cfg)
     # datasets load
-    X_train, y_train = load_mnist(train=True)
+    print("start data preparation")
+    X_train, y_train = load_mnist(cfg.data, train=True)
     # permute train
     idxs = np.random.permutation(np.arange(X_train.shape[0]))
     X_train, y_train = X_train[idxs], y_train[idxs]
 
     # for final model:
-    train_loader_full = get_loader(X_train, y_train)
-    # for validation purposes:
-    train_loader = get_loader(X_train[:25000], y_train[:25000])
-    val_loader = get_loader(X_train[25000:30000], y_train[25000:30000])
+    # train_loader_full = get_loader(X_train, y_train)
+    index_to_train = int(min(1.0, cfg.training.train_part) * len(X_train))
+    train_loader = get_loader(
+        X=X_train[:index_to_train],
+        y=y_train[:index_to_train],
+        batch_size=cfg.training.batch_size,
+    )
+    val_loader = get_loader(
+        X=X_train[index_to_train:-1],
+        y=y_train[index_to_train:-1],
+        batch_size=cfg.training.batch_size,
+    )
 
+    print("finish data preparation")
     # define model
-    model_parameters = {"k": 4}
-    model = CNN_new(**model_parameters)
-    opt = torch.optim.Adam(model.parameters())
-    criterion = nn.CrossEntropyLoss()
-    device = torch.device("cpu")
-    train(model, opt, train_loader, val_loader, criterion, n_epochs, device, verbose=True)
 
-    save_all(model, model_parameters, save_name)
+    model_parameters = {"k": cfg.model.parameters.k}
+    model = CNN_new(**model_parameters)
+    opt = None
+    if cfg.training.optimizer == "adam":
+        opt = torch.optim.Adam(model.parameters())
+    criterion = nn.CrossEntropyLoss()
+
+    print("start training")
+    train(
+        model,
+        opt,
+        train_loader,
+        val_loader,
+        criterion=criterion,
+        n_epochs=cfg.training.epochs,
+        device=cfg.training.device,
+        verbose=True,
+    )
+
+    print("finish training\nmodel saving")
+    save_all(
+        model,
+        model_parameters,
+        save_path=cfg.model.save_path,
+        save_name=cfg.model.save_name,
+    )
+    print(f"model saved at {cfg.model.save_name}")
+
+
+if __name__ == "__main__":
+    main()
