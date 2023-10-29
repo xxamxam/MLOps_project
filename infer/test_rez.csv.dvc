@@ -1,0 +1,5 @@
+outs:
+- md5: 2a48cc2e7dcff072796be6b5472cd002
+  size: 68893
+  hash: md5
+  path: test_rez.csv
