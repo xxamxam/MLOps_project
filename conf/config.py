@@ -27,6 +27,8 @@ class Model:
 
 @dataclass
 class Training:
+    log_every_n_steps: int
+    num_workers: int
     train_part: float
     batch_size: int
     epochs: int
@@ -37,10 +39,21 @@ class Training:
 @dataclass
 class Infer:
     model_name: str
-    model_parh: str
+    model_path: str
     infer_save_path: str
     infer_name: str
     batch_size: int
+
+
+@dataclass
+class MLflow:
+    experiment_name: str
+    tracking_uri: str
+
+
+@dataclass
+class Loggers:
+    mlflow: MLflow
 
 
 @dataclass
@@ -49,3 +62,4 @@ class Config:
     model: Model
     training: Training
     infer: Infer
+    loggers: Loggers

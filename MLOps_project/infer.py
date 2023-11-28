@@ -4,17 +4,18 @@ import hydra
 import numpy as np
 import pandas as pd
 import torch
-from conf.config import Config
+from conf.config import Config, Model
+from data import get_loader, load_mnist
 from hydra.core.config_store import ConfigStore
 from model import CNN_new
-from utils import get_loader, load_mnist
 
 
 def load_model(model_path, model_name):
     filename = model_path + model_name
     assert os.path.isfile(filename), "file do not exist"
     [model_state_dict, model_parameters] = torch.load(filename)
-    model = CNN_new(**model_parameters)
+    conf = Model(**model_parameters)
+    model = CNN_new(conf)
     model.load_state_dict(model_state_dict)
     return model
 
