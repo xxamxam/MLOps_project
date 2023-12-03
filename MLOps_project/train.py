@@ -10,7 +10,7 @@ from utils import convert_to_onnx, save_all
 
 
 cs = ConfigStore.instance()
-cs.store(name="config", node=Config)
+cs.store(name="config", group="first", node=Config)
 
 
 @hydra.main(config_path="./../conf", config_name="config", version_base="1.3")
@@ -22,7 +22,7 @@ def main(cfg: Config):
     dm = MyDataModule(cfg=cfg)
 
     model = CNN_new(conf=cfg.model)
-
+    print("\n\nMODEL IS SETTED\n\n")
     loggers = [
         # pl.loggers.CSVLogger("./.logs/my-csv-logs", name="first_experiment"),
         pl.loggers.MLFlowLogger(

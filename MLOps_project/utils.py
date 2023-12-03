@@ -50,9 +50,6 @@ def convert_to_onnx(model, conf: OnnxParameters):
     onnx_model = onnx.load(conf.onnx_path)
     with mlflow.start_run():
         signature = infer_signature(input_tensor.numpy(), original_emb)
-        model_info = mlflow.onnx.log_model(onnx_model, "model", signature=signature)
         mlflow.onnx.save_model(
             onnx_model, conf.mlflow_onnx_export_path, signature=signature
         )
-
-    print(f"model URI: {model_info.model_uri}")
