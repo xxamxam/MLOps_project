@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -18,11 +19,20 @@ class ModelParameters:
 
 
 @dataclass
+class OnnxParameters:
+    export_to_onnx: bool
+    onnx_path: str
+    input_shape: List
+    mlflow_onnx_export_path: str
+
+
+@dataclass
 class Model:
     name: str
     save_path: str
     save_name: str
     parameters: ModelParameters
+    onnx_parameters: OnnxParameters
 
 
 @dataclass

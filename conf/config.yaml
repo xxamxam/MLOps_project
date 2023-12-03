@@ -13,6 +13,11 @@ model:
   save_name: best_model.xyz
   parameters:
     k: 4
+  onnx_parameters:
+    export_to_onnx: True
+    onnx_path: ./models/best_model.onnx
+    mlflow_onnx_export_path: ./models/onnx_model
+    input_shape: [1, 28, 28]
 
 training:
   log_every_n_steps: 20
@@ -35,4 +40,5 @@ infer:
 loggers:
   mlflow:
     experiment_name: first_exp
-    tracking_uri: file:./.logs/my-mlflow-log
+    tracking_uri: http://localhost:8888
+    #file:./.logs/my-mlflow-log

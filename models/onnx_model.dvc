@@ -1,0 +1,6 @@
+outs:
+- md5: d149a29a9b51df66588e704f07b94889.dir
+  size: 3791
+  nfiles: 5
+  hash: md5
+  path: onnx_model

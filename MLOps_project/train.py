@@ -1,11 +1,12 @@
 import hydra
 import lightning.pytorch as pl
+import mlflow
 import torch
 from conf.config import Config
 from data import MyDataModule
 from hydra.core.config_store import ConfigStore
 from model import CNN_new
-from utils import save_all
+from utils import convert_to_onnx, save_all
 
 
 cs = ConfigStore.instance()
@@ -25,6 +26,7 @@ def main(cfg: Config):
     loggers = [
         # pl.loggers.CSVLogger("./.logs/my-csv-logs", name="first_experiment"),
         pl.loggers.MLFlowLogger(
+            # experiment_id = cfg.loggers.mlflow.experiment_name,
             experiment_name=cfg.loggers.mlflow.experiment_name,  # cfg.artifacts.experiment_name,
             tracking_uri=cfg.loggers.mlflow.tracking_uri,
         )
@@ -51,6 +53,12 @@ def main(cfg: Config):
         save_path=cfg.model.save_path,
         save_name=cfg.model.save_name,
     )
+
+    if cfg.model.onnx_parameters.export_to_onnx:
+        mlflow.set_tracking_uri(cfg.loggers.mlflow.tracking_uri)
+        mlflow.set_experiment(cfg.loggers.mlflow.experiment_name)
+        convert_to_onnx(model=model, conf=cfg.model.onnx_parameters)
+
     print(f"model saved at {cfg.model.save_name}")
 
 

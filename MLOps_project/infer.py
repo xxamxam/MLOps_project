@@ -50,6 +50,7 @@ cs.store(name="infer_config", node=Config)
 def main(cfg: Config):
     print("prepare data for test")
     X_test, y_test = load_mnist(cfg.data, train=False)  # здесь не должно быть
+    print(X_test.shape)
     test_loader = get_loader(X=X_test, y=y_test, batch_size=cfg.infer.batch_size)
 
     model = load_model(model_name=cfg.infer.model_name, model_path=cfg.infer.model_path)
