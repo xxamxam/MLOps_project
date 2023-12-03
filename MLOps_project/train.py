@@ -1,6 +1,5 @@
 import hydra
 import lightning.pytorch as pl
-import mlflow
 import torch
 from conf.config import Config
 from data import MyDataModule
@@ -55,8 +54,6 @@ def main(cfg: Config):
     )
 
     if cfg.model.onnx_parameters.export_to_onnx:
-        mlflow.set_tracking_uri(cfg.loggers.mlflow.tracking_uri)
-        mlflow.set_experiment(cfg.loggers.mlflow.experiment_name)
         convert_to_onnx(model=model, conf=cfg.model.onnx_parameters)
 
     print(f"model saved at {cfg.model.save_name}")

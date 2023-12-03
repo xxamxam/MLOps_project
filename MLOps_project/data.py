@@ -1,5 +1,5 @@
 import os
-import sys
+import subprocess
 from typing import Optional
 
 import lightning.pytorch as pl
@@ -12,14 +12,15 @@ def load_mnist(cfg: Data, flatten=False, train=True):
     # provide Data part of config
     """taken from https://github.com/Lasagne/Lasagne/blob/master/examples/mnist.py"""
     # We first define a download function, supporting both Python 2 and 3.
-    if sys.version_info[0] == 2:
-        from urllib import urlretrieve
-    else:
-        from urllib.request import urlretrieve
+    # if sys.version_info[0] == 2:
+    #     from urllib import urlretrieve
+    # else:
+    #     from urllib.request import urlretrieve
 
     def download(filename, source=cfg.sourse, path=cfg.path):
-        print("Downloading %s" % filename)
-        urlretrieve(source + filename, path + filename)
+        print("Downloading %s" % path + filename)
+        subprocess.run(["dvc", "pull", f"{path + filename}.dvc"])
+        # urlretrieve(source + filename, path + filename)
 
     # We then define functions for loading MNIST images and labels.
     # For convenience, they also download the requested files if needed.
