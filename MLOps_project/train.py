@@ -30,6 +30,7 @@ def main(cfg: Config):
             tracking_uri=cfg.loggers.mlflow.tracking_uri,
         )
     ]
+    loggers[0].log_hyperparams(cfg)
 
     callbacks = [
         pl.callbacks.LearningRateMonitor(logging_interval="step"),
