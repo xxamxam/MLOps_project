@@ -48,13 +48,17 @@ serving_addr тот который у вас. На localhost может поме
 - ..
 - решается задача распознавания цифр в мнисте, модель принимает картинки и возвращает вектор из 10 координат
 - model_repository:
-    model_repository
-    └── onnx-model
-        ├── 1
-        │   └── model.onnx
-        └── config.pbtxt
+
+model_repository
+└── onnx-model
+    ├── 1
+    │   └── model.onnx
+    └── config.pbtxt
 
 
+
+## конвертация модели
+    python MLOps_project/convert_model.py ./models/best_model.xyz ./model_repository/onnx-model/1/model.onnx
 
 
 ## важное
