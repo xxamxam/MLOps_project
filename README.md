@@ -20,6 +20,7 @@
 
 параметры для тренировки находятся в конфиге. При первом запуске при отсутствии данных они подгрузятся через dvc. Это можно найти в `MLOps_project/data.py`
 
+# MLFlow
 ## инференс
 
 Чтобы запустить сервер
@@ -41,7 +42,15 @@ serving_addr тот который у вас. На localhost может поме
 
 ## выбор параметров
 
-Эту часть не получилось сделать, так как на macbook нет сервисов Nvidia, а сервер пытается инициализировать NVML.
+рассмотрел параметры
+```
+    instance_group.count
+    dynamic_batching.max_queue_delay_microseconds
+    dynamic_batching.preferred_batch_size
+```
+
+Так как у меня нет GPU и возможно серверу выделить только 5 ядер, instance_group.count = 1 оказался более предпочтительным. Также max_queue_delay = 2000 показал меньшую задержку по сравнению с 1000, так что взял их.
+
 
 - MacOS 14.1.1 (23B81)
 - Apple M1 Pro
@@ -59,11 +68,34 @@ serving_addr тот который у вас. На localhost может поме
         └── config.pbtxt
 ```
 
+- метрики throughput и latency
+
+| count | max_queue_delay | throughput (infer/sec)| latency (usec)|
+|-------|-----------------|------------|---------|
+|   1   |       1000      | 8893.17      |   2248      |
+|   1   |       2000      | 10556.8    |   1894    |
+|    2   |         1000        |      9727.4      |     2055    |
+|    2   |        2000         |      10066.7      |     1985    |
 
 ## конвертация модели
     python MLOps_project/convert_model.py ./models/best_model.xyz ./model_repository/onnx-model/1/model.onnx
 
+## server_client
+
+после запуска сервера
+    docker compose up
+
+запуск клиента делается максимально просто
+
+    python MLOps_project/client_triton.py
 
 ## важное
 
 если хотите прервать тренировку или сервер, то используйте `ctrl + C`, это завершит все процессы задействованные в работе программы.
+
+## команды всякие
+
+
+    docker run -it --rm --net=host nvcr.io/nvidia/tritonserver:23.04-py3-sdk
+
+    perf_analyzer -m onnx-model -u localhost:8500 --concurrency-range 20:20 --shape IMAGES:2,1,28,28

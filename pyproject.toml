@@ -17,6 +17,7 @@ dvc-gdrive = "^2.20.0"
 onnx = "^1.15.0"
 pydantic = "<=1.9"
 fire = "^0.5.0"
+tritonclient = {extras = ["http"], version = "^2.41.0"}
 
 
 [tool.poetry.dev-dependencies]
