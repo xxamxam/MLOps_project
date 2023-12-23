@@ -50,11 +50,13 @@ serving_addr тот который у вас. На localhost может поме
 - model_repository:
 
 model_repository
-└── onnx-model
-    ├── 1
-    │   └── model.onnx
-    └── config.pbtxt
 
+```
+    └── onnx-model
+        ├── 1
+        │   └── model.onnx
+        └── config.pbtxt
+```
 
 
 ## конвертация модели
