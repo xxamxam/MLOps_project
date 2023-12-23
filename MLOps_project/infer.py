@@ -1,23 +1,11 @@
-import os
-
 import hydra
 import numpy as np
 import pandas as pd
 import torch
-from conf.config import Config, Model
+from conf.config import Config
 from data import get_loader, load_mnist
 from hydra.core.config_store import ConfigStore
-from model import CNN_new
-
-
-def load_model(model_path, model_name):
-    filename = model_path + model_name
-    assert os.path.isfile(filename), "file do not exist"
-    [model_state_dict, model_parameters] = torch.load(filename)
-    conf = Model(**model_parameters)
-    model = CNN_new(conf)
-    model.load_state_dict(model_state_dict)
-    return model
+from utils import load_model
 
 
 def validate(model, test_loader, device):

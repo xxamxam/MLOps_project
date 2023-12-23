@@ -2,4 +2,4 @@ outs:
 - md5: 78ed15e9c3232016067dd622fbe91e43
   size: 199494
   hash: md5
-  path: best_model.onnx
+  path: model.onnx

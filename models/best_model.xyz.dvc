@@ -1,5 +1,5 @@
 outs:
-- md5: 8a9709e747e0d411fc692ea813b2907a
+- md5: 79d66f61124da55ffdacea6e28e875af
   size: 205103
   hash: md5
   path: best_model.xyz

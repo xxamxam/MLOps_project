@@ -28,6 +28,7 @@ def main(cfg: Config):
             # experiment_id = cfg.loggers.mlflow.experiment_name,
             experiment_name=cfg.loggers.mlflow.experiment_name,  # cfg.artifacts.experiment_name,
             tracking_uri=cfg.loggers.mlflow.tracking_uri,
+            artifact_location="./../conf/config.yaml",
         )
     ]
     loggers[0].log_hyperparams(cfg)
