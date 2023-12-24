@@ -33,6 +33,15 @@ cs = ConfigStore.instance()
 cs.store(name="infer_config", node=Config)
 
 
+def draw_num(num):
+    # num is 1x28X28 array
+    num = num[0]
+    for i in range(28):
+        for j in range(28):
+            print("*" if (num[i][j] != 0) else " ", end="")
+        print()
+
+
 @hydra.main(config_path="./../conf", config_name="config", version_base="1.3")
 def main(cfg: Config):
     X_test, y_test = load_mnist(cfg.data, train=False)
@@ -41,6 +50,10 @@ def main(cfg: Config):
     accuracy = np.mean(y_test == np.argmax(rez, axis=1))
     print(f"tested_numbers: {np.argmax(rez, axis = 1)}")
     print(f"model accuracy is {accuracy}")
+
+    print("second number in dataset is 2:")
+    draw_num(X_test[1])
+
     return
 
 
