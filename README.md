@@ -91,11 +91,12 @@ serving_addr тот который у вас. На localhost может поме
 
 ## важное
 
-если хотите прервать тренировку или сервер, то используйте `ctrl + C`, это завершит все процессы задействованные в работе программы.
+если хотите прервать тренировку или сервер, то используйте `cmd + C`, это завершит все процессы задействованные в работе программы.
 
 ## команды всякие
 
-
     docker run -it --rm --net=host nvcr.io/nvidia/tritonserver:23.04-py3-sdk
+
+perf_analyzer
 
     perf_analyzer -m onnx-model -u localhost:8500 --concurrency-range 20:20 --shape IMAGES:2,1,28,28
