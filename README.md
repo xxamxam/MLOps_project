@@ -82,7 +82,9 @@ serving_addr тот который у вас. На localhost может поме
 
 ## server_client
 
-после запуска сервера
+Для первого запуска нужно загрузить модель. Далее запуск сервера
+
+    dvc pull model_repository/onnx-model/1/model.onnx.dvc 
     docker compose up
 
 запуск клиента делается максимально просто
